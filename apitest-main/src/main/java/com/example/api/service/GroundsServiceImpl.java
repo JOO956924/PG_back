@@ -75,6 +75,7 @@ public class GroundsServiceImpl implements GroundsService {
     Page<Object[]> result = groundsRepository.searchPage(
         pageRequestDTO.getType(),
         pageRequestDTO.getKeyword(),
+        pageRequestDTO.getDay(),
         pageable
     );
 

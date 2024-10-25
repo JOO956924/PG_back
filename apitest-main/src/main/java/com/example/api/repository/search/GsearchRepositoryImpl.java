@@ -50,7 +50,7 @@ public class GsearchRepositoryImpl extends QuerydslRepositorySupport
 //  }
 
   @Override
-  public Page<Object[]> searchPage(String type, String keyword, Pageable pageable) {
+  public Page<Object[]> searchPage(String type, String keyword,String day, Pageable pageable) {
     log.info("searchPage...............");
 
     //1) Q 도메인 확보
@@ -71,7 +71,17 @@ public class GsearchRepositoryImpl extends QuerydslRepositorySupport
     BooleanExpression expression = grounds.gno.gt(0L);  // gno가 0보다 큰 경우
     booleanBuilder.and(expression);
 
-    //5) 검색 조건 파악
+    //5) day 검색 필터링
+    if (day != null && !day.isEmpty()) {
+      try {
+        int dayKeyword = Integer.parseInt(day);  // day 값을 int로 변환
+        booleanBuilder.and(grounds.day.eq(dayKeyword));  // 정확한 날짜 필터링
+      } catch (NumberFormatException e) {
+        log.warn("Invalid day: {}", day);
+      }
+    }
+
+    //6) 검색 조건 파악 - 제목, 내용 등 추가 검색 조건 처리
     if (type != null) {
       String[] typeArr = type.split("");
       BooleanBuilder conditionBuilder = new BooleanBuilder();
@@ -86,23 +96,15 @@ public class GsearchRepositoryImpl extends QuerydslRepositorySupport
           case "c":  // 스포츠 종류 검색
             conditionBuilder.or(grounds.sports.contains(keyword));
             break;
-          case "d":  // day 검색 (정확한 숫자 검색)
-            try {
-              int dayKeyword = Integer.parseInt(keyword);  // keyword를 int로 변환
-              conditionBuilder.or(grounds.day.eq((dayKeyword)));  // day가 keyword와 정확히 같은지 확인
-            } catch (NumberFormatException e) {
-              log.warn("Invalid day keyword: {}", keyword);
-            }
-            break;
         }
       }
-      booleanBuilder.and(conditionBuilder);
+      booleanBuilder.and(conditionBuilder);  // 날짜 필터링 후 추가 조건 적용
     }
 
-    //6) 조건을 tuple에 적용
+    //7) 조건을 tuple에 적용
     tuple.where(booleanBuilder);
 
-    //7) 정렬 조건 적용
+    //8) 정렬 조건 적용
     Sort sort = pageable.getSort();
     sort.stream().forEach(order -> {
       Order direction = order.isAscending() ? Order.ASC : Order.DESC;
@@ -111,22 +113,22 @@ public class GsearchRepositoryImpl extends QuerydslRepositorySupport
       tuple.orderBy(new OrderSpecifier<>(direction, orderByExpression.get(prop)));
     });
 
-    //8) 그룹핑
+    //9) 그룹핑
     tuple.groupBy(grounds);
 
-    //9) 페이징 처리
+    //10) 페이징 처리
     tuple.offset(pageable.getOffset());
     tuple.limit(pageable.getPageSize());
 
-    //10) 결과 가져오기
+    //11) 결과 가져오기
     List<Tuple> result = tuple.fetch();
     log.info(result);
 
-    //11) 총 갯수 가져오기
+    //12) 총 갯수 가져오기
     long count = tuple.fetchCount();
     log.info("COUNT: " + count);
 
-    //12) 페이지 객체 반환
+    //13) 페이지 객체 반환
     return new PageImpl<>(result.stream().map(t -> t.toArray()).collect(Collectors.toList()), pageable, count);
   }
 }

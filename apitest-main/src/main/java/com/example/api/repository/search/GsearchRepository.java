@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 public interface GsearchRepository {
 //  Feeds search1();
 
-  Page<Object[]> searchPage(String type, String keyword, Pageable pageable);
+  Page<Object[]> searchPage(String type, String keyword, String day,Pageable pageable);
 
 }

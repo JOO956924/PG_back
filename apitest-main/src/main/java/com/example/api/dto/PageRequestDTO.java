@@ -15,10 +15,12 @@ public class PageRequestDTO {
   private int size; // 페이지당 목록 갯수
   private String type;
   private String keyword;
+  private String day; // 날짜 검색 조건 추가
 
   // 첫 페이지가 1페이지로 가기 때문
   public PageRequestDTO() {
-    page = 1; size = 10;
+    this.page = 1;
+    this.size = 10;
   }
 
   // Pageable은 페이지 처리를 위한 객체
