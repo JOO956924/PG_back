@@ -41,7 +41,7 @@ public class GroundsController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
-  @PostMapping(value = "/register")
+  @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
   public ResponseEntity<Long> register(@RequestBody GroundsDTO groundsDTO) {
     Long gno = groundsService.register(groundsDTO);
     System.out.println("Received day: " + groundsDTO.getDay());
@@ -57,29 +57,23 @@ public class GroundsController {
   }
 
   @PostMapping(value = "/modify", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, String>> modify(@RequestBody GroundsDTO dto,
-                                                    @RequestBody PageRequestDTO pageRequestDTO) {
-    log.info("modify post... dto: " + dto);
+  public ResponseEntity<Map<String, String>> modify(@RequestBody GroundsDTO dto) {
+    log.info("modify put... dto: " + dto);
     groundsService.modify(dto);
-    typeKeywordInit(pageRequestDTO);
     Map<String, String> result = new HashMap<>();
-    result.put("msg", dto.getGno() + " 수정");
+    result.put("msg", dto.getGno() + " 그룹을 수정했습니다.");
     result.put("gno", dto.getGno() + "");
-    result.put("page", pageRequestDTO.getPage() + "");
-    result.put("type", pageRequestDTO.getType());
-    result.put("keyword", pageRequestDTO.getKeyword());
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
   @PostMapping(value = "/remove/{gno}", produces = MediaType.APPLICATION_JSON_VALUE )
   public ResponseEntity<Map<String, String>> remove(
       @PathVariable Long gno, @RequestBody PageRequestDTO pageRequestDTO) {
-
     Map<String, String> result = new HashMap<>();
-    List<String> bphotoList = groundsService.removeWithReviewsAndGphotos(gno);
-    bphotoList.forEach(fileName -> {
+    List<String> gphotolist = groundsService.removeWithReviewsAndGphotos(gno);
+    gphotolist.forEach(fileName -> {
       try {
-        log.info("removeFile..." + fileName);
+        log.info("removeFile............" + fileName);
         String srcFileName = URLDecoder.decode(fileName, "UTF-8");
         File file = new File(uploadPath + File.separator + srcFileName);
         file.delete();
@@ -93,7 +87,7 @@ public class GroundsController {
       pageRequestDTO.setPage(pageRequestDTO.getPage() - 1);
     }
     typeKeywordInit(pageRequestDTO);
-    result.put("msg", gno + " 삭제");
+    result.put("msg", gno + " 삭제했습니다.");
     result.put("page", pageRequestDTO.getPage() + "");
     result.put("type", pageRequestDTO.getType() + "");
     result.put("keyword", pageRequestDTO.getKeyword() + "");
