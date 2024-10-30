@@ -28,8 +28,12 @@ public class GroundsController {
   private String uploadPath;
 
   private void typeKeywordInit(PageRequestDTO pageRequestDTO) {
-    if (pageRequestDTO.getType().equals("null")) pageRequestDTO.setType("");
-    if (pageRequestDTO.getKeyword().equals("null")) pageRequestDTO.setKeyword("");
+    if (pageRequestDTO.getType() == null || pageRequestDTO.getType().equals("null")) {
+      pageRequestDTO.setType("");
+    }
+    if (pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("null")) {
+      pageRequestDTO.setKeyword("");
+    }
   }
 
   @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
