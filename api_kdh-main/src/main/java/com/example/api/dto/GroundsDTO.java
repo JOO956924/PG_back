@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,17 +23,18 @@ public class GroundsDTO {
   private String gtitle; // 구장 이름
   private String location; // 위치
   private String sports; // 스포츠 종류
-  //  private String reservation = "OPEN"; // 예약 마감 여부
-  private int day; // 경기 날짜
+  private String reservation = "OPEN"; // 예약 마감 여부
   private String groundstime; // 경기 시간
-  private String email; // 등록자 이메일
+  //  private String email; // 등록자 이메일
 //  private String name; // 등록자 이름
   private String info; // 구장 정보
+  private int day;
 
   private int price; // 가격
   private int maxpeople; // 최대 인원
-//  private int nowpeople; // 현재 인원
+  private int nowpeople; // 현재 인원
 
   private LocalDateTime regDate; // 등록일
   private LocalDateTime modDate; // 수정일
+
 }

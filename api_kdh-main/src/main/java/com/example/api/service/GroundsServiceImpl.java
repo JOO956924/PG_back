@@ -36,19 +36,19 @@ public class GroundsServiceImpl implements GroundsService {
   private final MembersRepository membersRepository;
 
 
-//  @Override
-//  public void makeReservation(Long groundId) {
-//    Grounds grounds = groundsRepository.findById(groundId)
-//        .orElseThrow(() -> new RuntimeException("Ground not found"));
-//
-////     예약 가능 여부 확인
-//    if (grounds.canReserve()) {
-//      grounds.incrementNowPeople(); // 현재 인원 수 증가
-//      groundsRepository.save(grounds); // DB에 저장
-//    } else {
-//      throw new RuntimeException("예약이 마감되었습니다."); // 예외 처리
-//    }
-//  }
+  @Override
+  public void makeReservation(Long groundId) {
+    Grounds grounds = groundsRepository.findById(groundId)
+        .orElseThrow(() -> new RuntimeException("Ground not found"));
+
+    // 예약 가능 여부 확인
+    if (grounds.canReserve()) {
+      grounds.incrementNowPeople(); // 현재 인원 수 증가
+      groundsRepository.save(grounds); // DB에 저장
+    } else {
+      throw new RuntimeException("예약이 마감되었습니다."); // 예외 처리
+    }
+  }
 
   @Override
   public Long register(GroundsDTO groundsDTO) {
@@ -124,7 +124,7 @@ public class GroundsServiceImpl implements GroundsService {
       Map<String, Object> entityMap = dtoToEntity(groundsDTO);
       Grounds grounds = (Grounds) entityMap.get("grounds");
       grounds.changeGtitle(groundsDTO.getGtitle());
-//      grounds.changeReservation(groundsDTO.getReservation());
+      grounds.changeReservation(groundsDTO.getReservation());
       groundsRepository.save(grounds);
       // gphotosList :: 수정창에서 이미지 수정할 게 있는 경우의 목록
       List<Gphotos> newGphotosList =

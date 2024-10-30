@@ -18,19 +18,20 @@ public class Members extends BasicEntity{
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long mid;
 
-  // 중복 금지 어노테이션
+  // 유니크
   @Column(unique = true)
   private String email;
-
   private String pw;
   private String name;
   private String birth;
   private String phone;
+  private String likes;
 
   private int nowcash; // 현재 보유 캐쉬
   private int addcash; // 충전한 캐쉬
   private String level; // 내 경기 레벨
   private String prefer; // 최다로 즐긴 스포츠 (선호 종목)
+
 
   private boolean fromSocial;
   @ElementCollection(fetch = FetchType.LAZY)

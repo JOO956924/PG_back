@@ -35,7 +35,7 @@ public interface GroundsService {
   void removeUuid(String uuid);
 
   // 구장 예약
-//  void makeReservation(Long groundId);
+  void makeReservation(Long groundId);
 
 
 
@@ -54,6 +54,8 @@ public interface GroundsService {
         .day(groundsDTO.getDay())
         .groundstime(groundsDTO.getGroundstime())
         .maxpeople(groundsDTO.getMaxpeople())
+        .nowpeople(groundsDTO.getNowpeople())
+        .reservation(groundsDTO.getReservation())
         .info(groundsDTO.getInfo())
         .build();
 
@@ -87,6 +89,8 @@ public interface GroundsService {
         .day(grounds.getDay())
         .groundstime(grounds.getGroundstime())
         .maxpeople(grounds.getMaxpeople())
+        .nowpeople(grounds.getNowpeople())
+        .reservation(grounds.getReservation())
         .info(grounds.getInfo())
         .reviewsCnt(reviewsCnt)
         .regDate(grounds.getRegDate())

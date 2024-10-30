@@ -68,13 +68,12 @@ public class GroundsController {
 
   @PostMapping(value = "/remove/{gno}", produces = MediaType.APPLICATION_JSON_VALUE )
   public ResponseEntity<Map<String, String>> remove(
-      @PathVariable Long gno) {
-
+      @PathVariable Long gno, @RequestBody PageRequestDTO pageRequestDTO) {
     Map<String, String> result = new HashMap<>();
-    List<String> bphotoList = groundsService.removeWithReviewsAndGphotos(gno);
-    bphotoList.forEach(fileName -> {
+    List<String> gphotolist = groundsService.removeWithReviewsAndGphotos(gno);
+    gphotolist.forEach(fileName -> {
       try {
-        log.info("removeFile..." + fileName);
+        log.info("removeFile............" + fileName);
         String srcFileName = URLDecoder.decode(fileName, "UTF-8");
         File file = new File(uploadPath + File.separator + srcFileName);
         file.delete();
@@ -84,18 +83,25 @@ public class GroundsController {
         log.info("remove file : " + e.getMessage());
       }
     });
-    result.put("msg", gno + " 삭제");
+    if (groundsService.getList(pageRequestDTO).getDtoList().size() == 0 && pageRequestDTO.getPage() != 1) {
+      pageRequestDTO.setPage(pageRequestDTO.getPage() - 1);
+    }
+    typeKeywordInit(pageRequestDTO);
+    result.put("msg", gno + " 삭제했습니다.");
+    result.put("page", pageRequestDTO.getPage() + "");
+    result.put("type", pageRequestDTO.getType() + "");
+    result.put("keyword", pageRequestDTO.getKeyword() + "");
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
   // 예약 생성 메서드 추가
-//  @PostMapping("/{gno}/reservations")
-//  public ResponseEntity<String> createReservation(@PathVariable Long groundId) {
-//    try {
-//      groundsService.makeReservation(groundId);
-//      return ResponseEntity.ok("예약이 완료되었습니다.");
-//    } catch (RuntimeException e) {
-//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//    }
-//  }
+  @PostMapping("/{gno}/reservations")
+  public ResponseEntity<String> createReservation(@PathVariable Long groundId) {
+    try {
+      groundsService.makeReservation(groundId);
+      return ResponseEntity.ok("예약이 완료되었습니다.");
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+  }
 }
