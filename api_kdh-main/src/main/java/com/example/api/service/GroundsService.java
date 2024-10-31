@@ -37,6 +37,8 @@ public interface GroundsService {
   // 구장 예약
   void makeReservation(Long groundId);
 
+  // 구장이름으로 gno찾기
+  Long getGnoFromGtitle(String gtitle);
 
 
   // GroundsDTO를 Grounds 엔티티로 변환하는 메서드

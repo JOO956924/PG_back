@@ -10,7 +10,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -112,6 +114,28 @@ public class MembersServiceImpl implements MembersService {
 
     members.setLikes(updatedLikes);
     membersRepository.save(members);
+  }
+
+  @Override
+  public void removeLike(String email, Long gno) {
+    Members members = membersRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Member not found"));
+
+    // gno를 통해 grounds에서 gtitle 조회
+    String gtitle = groundsRepository.findById(gno)
+        .orElseThrow(() -> new RuntimeException("Ground not found"))
+        .getGtitle();
+
+    String currentLikes = members.getLikes();
+    if (currentLikes != null && currentLikes.contains(gtitle)) {
+      // 현재 likes에서 gtitle을 제거
+      String updatedLikes = Arrays.stream(currentLikes.split(","))
+          .filter(title -> !title.equals(gtitle))
+          .collect(Collectors.joining(","));
+
+      members.setLikes(updatedLikes);
+      membersRepository.save(members);
+    }
   }
 
 }

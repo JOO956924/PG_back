@@ -66,4 +66,5 @@ public interface MembersService {
   //  void updateCash(MembersDTO membersDTO);
   Long chargeCash(String email, int addcash);
   void addLikes(String email, Long gno);
+  void removeLike(String email, Long gno);
 }

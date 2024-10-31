@@ -49,4 +49,5 @@ public class Members extends BasicEntity{
   public void setLikes(String likes) {
     this.likes = likes;
   }
+
 }

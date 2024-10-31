@@ -93,4 +93,31 @@ public class MembersController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+
+  @PostMapping(value = "/removeLike", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> removeLikes(@RequestBody Map<String, Object> likeData) {
+    String email = (String) likeData.get("email");
+    Long gno = null;
+
+    // gno가 String으로 전달될 경우를 고려하여 Long으로 변환
+    if (likeData.get("gno") instanceof String) {
+      gno = Long.parseLong((String) likeData.get("gno"));
+    } else if (likeData.get("gno") instanceof Number) {
+      gno = ((Number) likeData.get("gno")).longValue();
+    }
+
+    if (gno == null) {
+      log.warn("gno value is missing in the request");
+      return new ResponseEntity<>(Map.of("error", "gno value is missing"), HttpStatus.BAD_REQUEST);
+    }
+
+    log.info("removeLike... email: " + email + ", gno: " + gno);
+
+    membersService.removeLike(email, gno);
+    Map<String, String> response = Map.of("message", "like removed");
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+
 }

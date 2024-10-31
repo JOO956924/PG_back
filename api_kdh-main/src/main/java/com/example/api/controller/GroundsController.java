@@ -108,4 +108,11 @@ public class GroundsController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
   }
+
+  @GetMapping("/gno")
+  public ResponseEntity<Long> getGnoByGtitle(@RequestParam String gtitle) {
+    Long gno = groundsService.getGnoFromGtitle(gtitle);
+    return ResponseEntity.ok(gno);
+  }
+
 }

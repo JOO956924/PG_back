@@ -203,4 +203,10 @@ public class GroundsServiceImpl implements GroundsService {
     gphotosRepository.deleteByUuid(uuid);
   }
 
+  @Override
+  public Long getGnoFromGtitle(String gtitle) {
+    return groundsRepository.findGnoByGtitle(gtitle)
+        .orElseThrow(() -> new RuntimeException("Ground with title " + gtitle + " not found"));
+  }
+
 }
