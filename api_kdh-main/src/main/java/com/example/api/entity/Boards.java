@@ -18,6 +18,8 @@ public class Boards extends BasicEntity{
   private Long bno;
 
   private String title;
+  private String email;
+  private String body;
   public void changeTitle(String title) {
     this.title = title;
   }

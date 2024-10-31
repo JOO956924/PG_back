@@ -41,4 +41,12 @@ public class Members extends BasicEntity{
   public void addMemberRole(MembersRole membersRole) {
     roleSet.add(membersRole);
   }
+
+  public void setNowcash(int nowcash) {
+    this.nowcash = nowcash;
+  }
+
+  public void setLikes(String likes) {
+    this.likes = likes;
+  }
 }

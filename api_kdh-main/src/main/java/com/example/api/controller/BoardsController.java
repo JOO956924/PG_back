@@ -28,8 +28,12 @@ public class BoardsController {
   private String uploadPath;
 
   private void typeKeywordInit(PageRequestDTO pageRequestDTO) {
-    if (pageRequestDTO.getType().equals("null")) pageRequestDTO.setType("");
-    if (pageRequestDTO.getKeyword().equals("null")) pageRequestDTO.setKeyword("");
+    if (pageRequestDTO.getType() == null || pageRequestDTO.getType().equals("null")) {
+      pageRequestDTO.setType("");
+    }
+    if (pageRequestDTO.getKeyword() == null || pageRequestDTO.getKeyword().equals("null")) {
+      pageRequestDTO.setKeyword("");
+    }
   }
 
   @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,34 +45,38 @@ public class BoardsController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
-  @PostMapping(value = "/register")
+  @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
   public ResponseEntity<Long> registerBoards(@RequestBody BoardsDTO boardsDTO) {
+    System.out.println(" 컨트롤러 수신 데이터:"+boardsDTO);
     Long bno = boardsService.register(boardsDTO);
+    if (boardsDTO.getBody() == null){
+      System.out.println("컨트롤러 : body 필드가 null입니다.");
+    }
     return new ResponseEntity<>(bno, HttpStatus.OK);
   }
 
-  @GetMapping(value = {"/read/{bno}", "/modify/{bno}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = {"/boards/{bno}","/read/{bno}", "/modify/{bno}"}, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Map<String, BoardsDTO>> getBoards(
-      @PathVariable("bno") Long bno, @RequestBody PageRequestDTO pageRequestDTO) {
+      @PathVariable("bno") Long bno) {
     BoardsDTO boardsDTO = boardsService.getBoards(bno);
-    typeKeywordInit(pageRequestDTO);
+    //typeKeywordInit(pageRequestDTO);
     Map<String, BoardsDTO> result = new HashMap<>();
     result.put("boardsDTO", boardsDTO);
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
   @PostMapping(value = "/modify", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, String>> modify(@RequestBody BoardsDTO dto,
-                       @RequestBody PageRequestDTO pageRequestDTO) {
+  public ResponseEntity<Map<String, String>> modify(@RequestBody BoardsDTO dto)
+  {
     log.info("modify post... dto: " + dto);
     boardsService.modify(dto);
-    typeKeywordInit(pageRequestDTO);
+    //typeKeywordInit(pageRequestDTO);
     Map<String, String> result = new HashMap<>();
     result.put("msg", dto.getBno() + " 수정");
     result.put("bno", dto.getBno() + "");
-    result.put("page", pageRequestDTO.getPage() + "");
-    result.put("type", pageRequestDTO.getType());
-    result.put("keyword", pageRequestDTO.getKeyword());
+    //result.put("page", pageRequestDTO.getPage() + "");
+    //result.put("type", pageRequestDTO.getType());
+    //result.put("keyword", pageRequestDTO.getKeyword());
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 

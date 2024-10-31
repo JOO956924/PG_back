@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @Log4j2
 @RequestMapping("/members")
@@ -49,4 +51,46 @@ public class MembersController {
     log.info("getMemberByEmail... email: " + email);
     return new ResponseEntity<>(membersService.getMemberByEmail(email), HttpStatus.OK);
   }
+
+//  @PutMapping(value = "/updateCash", produces = MediaType.APPLICATION_JSON_VALUE)
+//  public ResponseEntity<String> updateCash(@RequestBody MembersDTO membersDTO) {
+//    log.info("updateCash... membersDTO: " + membersDTO);
+//    membersService.updateCash(membersDTO);
+//    return new ResponseEntity<>("cash updated", HttpStatus.OK);
+//  }
+
+  @PostMapping(value = "/charge", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> chargeCash(@RequestBody Map<String, Object> chargeData) {
+    String email = (String) chargeData.get("email");
+    int addcash = (int) chargeData.get("addcash");
+    membersService.chargeCash(email, addcash);
+    Map<String, String> response = Map.of("message", "cash charged");
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @PostMapping(value = "/updateLikes", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> updateLikes(@RequestBody Map<String, Object> likeData) {
+    String email = (String) likeData.get("email");
+    Long gno = null;
+
+    // gno가 String으로 전달될 경우를 고려하여 Long으로 변환
+    if (likeData.get("gno") instanceof String) {
+      gno = Long.parseLong((String) likeData.get("gno"));
+    } else if (likeData.get("gno") instanceof Number) {
+      gno = ((Number) likeData.get("gno")).longValue();
+    }
+
+    if (gno == null) {
+      log.warn("gno value is missing in the request");
+      return new ResponseEntity<>(Map.of("error", "gno value is missing"), HttpStatus.BAD_REQUEST);
+    }
+
+    log.info("updateLikes... email: " + email + ", gno: " + gno);
+
+    membersService.addLikes(email, gno);
+    Map<String, String> response = Map.of("message", "likes updated");
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
 }

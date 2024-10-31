@@ -29,7 +29,10 @@ public interface BoardsService {
 
   default Map<String, Object> dtoToEntity(BoardsDTO boardsDTO) {
     Map<String, Object> entityMap = new HashMap<>();
-    Boards boards = Boards.builder().bno(boardsDTO.getBno())
+    Boards boards = Boards.builder()
+        .bno(boardsDTO.getBno())
+        .email(boardsDTO.getEmail())
+        .body(boardsDTO.getBody())
         .title(boardsDTO.getTitle()).build();
     entityMap.put("boards", boards);
     List<BphotosDTO> bphotosDTOList = boardsDTO.getBphotosDTOList();
@@ -57,7 +60,9 @@ public interface BoardsService {
       , Long likes, Long reviewsCnt) {
     BoardsDTO boardsDTO = BoardsDTO.builder()
         .bno(boards.getBno())
+        .email(boards.getEmail())
         .title(boards.getTitle())
+        .body((boards.getBody()))
         .regDate(boards.getRegDate())
         .modDate(boards.getModDate())
         .build();

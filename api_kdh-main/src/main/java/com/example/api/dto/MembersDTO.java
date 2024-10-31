@@ -22,6 +22,7 @@ public class MembersDTO {
   private int addcash;
   private String level;
   private String prefer;
+  private String likes;
 
   private boolean fromSocial;
   @Builder.Default
