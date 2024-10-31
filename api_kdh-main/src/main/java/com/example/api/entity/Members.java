@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,6 +27,12 @@ public class Members extends BasicEntity{
   private String birth;
   private String phone;
   private String likes;
+
+  @OneToMany
+  private List<Boards> boards;
+
+  @OneToMany
+  private List<Reviews> reviews;
 
   private int nowcash; // 현재 보유 캐쉬
   private int addcash; // 충전한 캐쉬

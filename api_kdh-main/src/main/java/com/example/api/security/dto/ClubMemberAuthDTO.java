@@ -23,7 +23,7 @@ public class ClubMemberAuthDTO extends User implements OAuth2User {
   private Map<String, Object> attr; //소셜로부터 받은 정보를 저장하는 속성
 
   public ClubMemberAuthDTO(String username, String password,
-                           Long cno, boolean fromSocial,
+                           Long mid, boolean fromSocial,
                            Collection<? extends GrantedAuthority> authorities) {
     super(username, password, authorities);
     this.mid = mid;

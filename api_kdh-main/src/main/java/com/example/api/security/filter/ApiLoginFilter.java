@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @Log4j2
 public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
-  private JWTUtil jwtUtil;
+  private final JWTUtil jwtUtil;
 
   public ApiLoginFilter(String defaultFilterProcessUrl, JWTUtil jwtUtil) {
     super(defaultFilterProcessUrl);
@@ -24,32 +24,50 @@ public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
   }
 
   @Override
-  public Authentication attemptAuthentication(
-      HttpServletRequest request, HttpServletResponse response)
+  public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException, IOException, ServletException {
     String email = request.getParameter("email");
     String pass = request.getParameter("pw");
-    log.info("attemptAuthentication...."+email+"/"+pass);
-    UsernamePasswordAuthenticationToken authToken =
-        new UsernamePasswordAuthenticationToken(email, pass);
+
+    log.info("인증 시도: 이메일 = {}", email);
+
+    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, pass);
     return getAuthenticationManager().authenticate(authToken);
   }
 
   @Override
-  protected void successfulAuthentication(
-      HttpServletRequest request, HttpServletResponse response,
-      FilterChain chain, Authentication authResult)
+  protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                          FilterChain chain, Authentication authResult)
       throws IOException, ServletException {
-    log.info("successfulAuthentication :: authResult " + authResult.getPrincipal());
-    String email = ((ClubMemberAuthDTO) authResult.getPrincipal()).getUsername();
-    String token = null;
+    log.info("인증 성공: 사용자 = {}", authResult.getPrincipal());
+
+    ClubMemberAuthDTO memberAuthDTO = (ClubMemberAuthDTO) authResult.getPrincipal();
+    String email = memberAuthDTO.getEmail();
+    Long mid = memberAuthDTO.getMid(); // mid 추출
+
+    // 응답 JSON에 mid 포함
+    String token;
     try {
-      token = jwtUtil.generateToken(email);
-      response.setContentType("text/plain");
-      response.getOutputStream().write(token.getBytes());
-      log.info("generated token :" + token);
+      token = jwtUtil.generateToken(email, mid); // mid를 포함하여 토큰 생성
+      response.setContentType("application/json");
+      response.setCharacterEncoding("UTF-8");
+      response.getWriter().write("{\"token\": \"" + token + "\", \"mid\": " + mid + "}");
+      log.info("생성된 토큰: {}", token);
     } catch (Exception e) {
+      log.error("토큰 생성 중 오류 발생: {}", e.getMessage());
       e.printStackTrace();
     }
+  }
+
+
+
+
+  @Override
+  protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            AuthenticationException failed) throws IOException, ServletException {
+    log.warn("인증 실패: {}", failed.getMessage());
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    response.setContentType("application/json;charset=utf-8");
+    response.getWriter().write("{\"error\": \"" + failed.getMessage() + "\"}");
   }
 }
