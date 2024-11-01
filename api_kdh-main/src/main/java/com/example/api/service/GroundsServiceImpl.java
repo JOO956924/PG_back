@@ -203,10 +203,35 @@ public class GroundsServiceImpl implements GroundsService {
     gphotosRepository.deleteByUuid(uuid);
   }
 
-  @Override
-  public Long getGnoFromGtitle(String gtitle) {
-    return groundsRepository.findGnoByGtitle(gtitle)
-        .orElseThrow(() -> new RuntimeException("Ground with title " + gtitle + " not found"));
+
+
+
+  public String[] parseTitleAndTime(String titleAndTime) {
+    int openParenIndex = titleAndTime.indexOf(" (");
+    int closeParenIndex = titleAndTime.indexOf(")");
+
+    if (openParenIndex == -1 || closeParenIndex == -1) {
+      throw new IllegalArgumentException("Invalid format: " + titleAndTime);
+    }
+
+    // gtitle과 groundstime을 분리하여 배열로 반환
+    String gtitle = titleAndTime.substring(0, openParenIndex).trim();
+    String groundstime = titleAndTime.substring(openParenIndex + 2, closeParenIndex).trim();
+
+    return new String[]{gtitle, groundstime};
   }
+
+  // Service 클래스 내부에 추가
+  public Long findGnoByTitleAndTime(String titleAndTime) {
+    // 문자열을 파싱하여 gtitle과 groundstime을 배열로 받음
+    String[] parsed = parseTitleAndTime(titleAndTime);
+    String gtitle = parsed[0];
+    String groundstime = parsed[1];
+
+    // gtitle과 groundstime을 사용해 gno를 검색
+    return groundsRepository.findGnoByGtitleAndGroundstime(gtitle, groundstime)
+        .orElseThrow(() -> new RuntimeException("Ground not found for title: " + gtitle + " and time: " + groundstime));
+  }
+
 
 }

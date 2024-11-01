@@ -2,12 +2,14 @@ package com.example.api.repository;
 
 import com.example.api.entity.Boards;
 import com.example.api.entity.Grounds;
+import com.example.api.entity.Members;
 import com.example.api.repository.search.GsearchRepository;
 import com.example.api.repository.search.SearchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,8 +66,10 @@ public interface GroundsRepository extends JpaRepository<Grounds, Long>, Gsearch
       "where g.gno = :gno group by p ")
   List<Object[]> getGroundsWithAll(Long gno); //특정 게시글 조회
 
-  @Query("select g.gno from Grounds g where g.gtitle = :gtitle ")
-  Optional<Long> findGnoByGtitle(String gtitle);
+  @Query("select g.gno from Grounds g where g.gtitle = :gtitle and g.groundstime = :groundstime")
+  Optional<Long> findGnoByGtitleAndGroundstime(@Param("gtitle") String gtitle, @Param("groundstime") String groundstime);
+
+
 
 }
 

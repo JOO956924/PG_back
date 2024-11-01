@@ -109,10 +109,16 @@ public class GroundsController {
     }
   }
 
+  // 경기시간과 구장이름으로 gno 검색
   @GetMapping("/gno")
-  public ResponseEntity<Long> getGnoByGtitle(@RequestParam String gtitle) {
-    Long gno = groundsService.getGnoFromGtitle(gtitle);
+  public ResponseEntity<Long> getGnoByGtitleAndGroundstime(
+      @RequestParam String gtitle,
+      @RequestParam String groundstime) {
+
+    Long gno = groundsService.findGnoByTitleAndTime(gtitle + " (" + groundstime + ")");
     return ResponseEntity.ok(gno);
   }
+
+
 
 }

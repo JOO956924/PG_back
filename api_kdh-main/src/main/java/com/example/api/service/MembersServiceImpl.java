@@ -1,6 +1,7 @@
 package com.example.api.service;
 
 import com.example.api.dto.MembersDTO;
+import com.example.api.entity.Grounds;
 import com.example.api.entity.Members;
 import com.example.api.repository.GroundsRepository;
 import com.example.api.repository.GroundsReviewsRepository;
@@ -101,36 +102,43 @@ public class MembersServiceImpl implements MembersService {
     Members members = membersRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    // gno를 통해 grounds에서 gtitle 조회
-    String gtitle = groundsRepository.findById(gno)
-        .orElseThrow(() -> new RuntimeException("Ground not found"))
-        .getGtitle();
+    // gno를 통해 grounds에서 gtitle과 groundstime 조회
+    Grounds grounds = groundsRepository.findById(gno)
+        .orElseThrow(() -> new RuntimeException("Ground not found"));
 
-    // 현재 likes 필드 값에 새로운 gtitle 추가
+    String gtitle = grounds.getGtitle();
+    String groundstime = grounds.getGroundstime();
+
+    // gtitle과 groundstime을 포함한 형식으로 likes에 추가
+    String newLikeEntry = gtitle + " (" + groundstime + ")";
     String currentLikes = members.getLikes();
     String updatedLikes = (currentLikes == null || currentLikes.isEmpty())
-        ? gtitle
-        : currentLikes + "," + gtitle;
+        ? newLikeEntry
+        : currentLikes + "," + newLikeEntry;
 
     members.setLikes(updatedLikes);
     membersRepository.save(members);
   }
+
 
   @Override
   public void removeLike(String email, Long gno) {
     Members members = membersRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("Member not found"));
 
-    // gno를 통해 grounds에서 gtitle 조회
-    String gtitle = groundsRepository.findById(gno)
-        .orElseThrow(() -> new RuntimeException("Ground not found"))
-        .getGtitle();
+    // gno를 통해 grounds에서 gtitle과 groundstime 조회
+    Grounds grounds = groundsRepository.findById(gno)
+        .orElseThrow(() -> new RuntimeException("Ground not found"));
+
+    String gtitle = grounds.getGtitle();
+    String groundstime = grounds.getGroundstime();
+    String targetLikeEntry = gtitle + " (" + groundstime + ")";
 
     String currentLikes = members.getLikes();
-    if (currentLikes != null && currentLikes.contains(gtitle)) {
-      // 현재 likes에서 gtitle을 제거
+    if (currentLikes != null && currentLikes.contains(targetLikeEntry)) {
+      // likes에서 targetLikeEntry 항목을 제거
       String updatedLikes = Arrays.stream(currentLikes.split(","))
-          .filter(title -> !title.equals(gtitle))
+          .filter(title -> !title.equals(targetLikeEntry))
           .collect(Collectors.joining(","));
 
       members.setLikes(updatedLikes);

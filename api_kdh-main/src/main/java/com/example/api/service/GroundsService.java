@@ -37,8 +37,11 @@ public interface GroundsService {
   // 구장 예약
   void makeReservation(Long groundId);
 
-  // 구장이름으로 gno찾기
-  Long getGnoFromGtitle(String gtitle);
+  // 구장이름,경기시작시간 으로 gno찾기
+  Long findGnoByTitleAndTime(String titleAndTime);
+
+  // 구장이름,경기시작시간 분리
+  String[] parseTitleAndTime(String titleAndTime);
 
 
   // GroundsDTO를 Grounds 엔티티로 변환하는 메서드
