@@ -41,11 +41,14 @@ public class MembersController {
   public ResponseEntity<Long> bregister(@RequestBody MembersDTO membersDTO) {
     log.info("Request to register member: " + membersDTO);
 
-    // 기본 권한 ROLE_USER 추가
+    // 기본 권한 ROLE_MANAGER 추가
     if (membersDTO.getRoleSet() == null) {
       membersDTO.setRoleSet(new HashSet<>());
     }
     membersDTO.getRoleSet().add("ROLE_MANAGER");
+
+    log.info("Roles before registering: " + membersDTO.getRoleSet());
+
     Long mid = membersService.registerMembers(membersDTO);
 
     return new ResponseEntity<>(mid, HttpStatus.OK);
