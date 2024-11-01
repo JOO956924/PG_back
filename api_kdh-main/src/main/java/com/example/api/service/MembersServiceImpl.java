@@ -3,6 +3,7 @@ package com.example.api.service;
 import com.example.api.dto.MembersDTO;
 import com.example.api.entity.Grounds;
 import com.example.api.entity.Members;
+import com.example.api.entity.MembersRole;
 import com.example.api.repository.GroundsRepository;
 import com.example.api.repository.GroundsReviewsRepository;
 import com.example.api.repository.MembersRepository;

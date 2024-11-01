@@ -24,6 +24,7 @@ public class GroundsDTO {
   private String location; // 위치
   private String sports; // 스포츠 종류
   private String reservation = "OPEN"; // 예약 마감 여부
+  private int greviewsCnt; // 예약자 수
   private String groundstime; // 경기 시간
   //  private String email; // 등록자 이메일
 //  private String name; // 등록자 이름

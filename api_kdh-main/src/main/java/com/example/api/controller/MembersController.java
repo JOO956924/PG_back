@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.Map;
 
 @RestController
@@ -21,7 +22,28 @@ public class MembersController {
   @PostMapping(value="/join")
   public ResponseEntity<Long> register(@RequestBody MembersDTO membersDTO) {
     log.info("Request to register member: " + membersDTO);
+
+    // 기본 권한 ROLE_USER 추가
+    if (membersDTO.getRoleSet() == null) {
+      membersDTO.setRoleSet(new HashSet<>());
+    }
+    membersDTO.getRoleSet().add("ROLE_USER");
     Long mid = membersService.registerMembers(membersDTO);
+
+    return new ResponseEntity<>(mid, HttpStatus.OK);
+  }
+
+  @PostMapping(value="/bjoin")
+  public ResponseEntity<Long> bregister(@RequestBody MembersDTO membersDTO) {
+    log.info("Request to register member: " + membersDTO);
+
+    // 기본 권한 ROLE_USER 추가
+    if (membersDTO.getRoleSet() == null) {
+      membersDTO.setRoleSet(new HashSet<>());
+    }
+    membersDTO.getRoleSet().add("ROLE_MANAGER");
+    Long mid = membersService.registerMembers(membersDTO);
+
     return new ResponseEntity<>(mid, HttpStatus.OK);
   }
 
