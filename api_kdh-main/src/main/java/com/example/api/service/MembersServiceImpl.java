@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -145,6 +146,11 @@ public class MembersServiceImpl implements MembersService {
       members.setLikes(updatedLikes);
       membersRepository.save(members);
     }
+  }
+
+  @Override
+  public Optional<Set<String>> getMemberRolesByEmail(String email) {
+    return membersRepository.findRolesByEmail(email);
   }
 
 }

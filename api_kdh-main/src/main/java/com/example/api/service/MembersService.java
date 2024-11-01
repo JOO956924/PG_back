@@ -4,6 +4,8 @@ import com.example.api.dto.MembersDTO;
 import com.example.api.entity.Members;
 import com.example.api.entity.MembersRole;
 
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -67,4 +69,5 @@ public interface MembersService {
   Long chargeCash(String email, int addcash);
   void addLikes(String email, Long gno);
   void removeLike(String email, Long gno);
+  Optional<Set<String>> getMemberRolesByEmail(String email);
 }

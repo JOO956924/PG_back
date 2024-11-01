@@ -1,6 +1,8 @@
 package com.example.api.controller;
 
 import com.example.api.dto.MembersDTO;
+import com.example.api.entity.Members;
+import com.example.api.entity.MembersRole;
 import com.example.api.service.MembersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @Log4j2
@@ -140,6 +144,21 @@ public class MembersController {
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  // 권한 정보를 반환하는 API
+  @GetMapping("/user/roles")
+  public ResponseEntity<Set<Integer>> getUserRoles(@RequestParam String email) {
+    Set<String> roleSet = membersService.getMemberRolesByEmail(email)
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+    // roleSet의 문자열 값을 MembersRole 열거형으로 매핑 후 ordinal로 변환
+    Set<Integer> roles = roleSet.stream()
+        .map(role -> MembersRole.valueOf(role).ordinal()) // 문자열을 MembersRole 열거형으로 변환 후 ordinal로 변환
+        .collect(Collectors.toSet());
+
+    return ResponseEntity.ok(roles);
+  }
+
 
 
 }

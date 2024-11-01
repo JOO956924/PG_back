@@ -51,7 +51,7 @@ public class SecurityConfig {
   }
 
   // String 배열에 정의된 주소는 token으로 인증해야만 접근할 수 있는 주소.
-  String[] checkAddress = {"/grounds/**", "/record/**","/boards/**", "/reviews/**" ,"/greviews/**"};
+  String[] checkAddress = {"/grounds/**", "/record/**","/boards/**", "/reviews/**" ,"/greviews/**", "/user/roles"};
   // /members/**/* 제외 또는 특정 경로로 변경
 
   @Bean
@@ -69,6 +69,7 @@ public class SecurityConfig {
 
     httpSecurity.authorizeHttpRequests(
         auth -> auth
+            .requestMatchers(new AntPathRequestMatcher("/user/roles")).authenticated()  // 인증된 사용자만 접근 허용
             .requestMatchers(new AntPathRequestMatcher("/boards/**")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/grounds/**")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/members/join")).permitAll()
