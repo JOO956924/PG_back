@@ -30,6 +30,7 @@ public class GroundsDTO {
 //  private String name; // 등록자 이름
   private String info; // 구장 정보
   private int day;
+  private Long mid;
 
   private int price; // 가격
   private int maxpeople; // 최대 인원
