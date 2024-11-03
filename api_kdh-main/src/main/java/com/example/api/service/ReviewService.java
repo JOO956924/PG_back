@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ReviewService {
   List<ReviewsDTO> getListOfBoards(Long bno);
-  
+
   Long register(ReviewsDTO reviewsDTO);
 
   void modify(ReviewsDTO reviewsDTO);
@@ -17,10 +17,15 @@ public interface ReviewService {
   void remove(Long reviewsnum);
 
   public default Reviews dtoToEntity(ReviewsDTO reviewsDTO) {
+    Members member = Members.builder()
+        .mid(reviewsDTO.getMid())
+        .email(reviewsDTO.getEmail()) // 이메일 설정
+        .build();
+
     Reviews reviews = Reviews.builder()
         .reviewsnum(reviewsDTO.getReviewsnum())
         .boards(Boards.builder().bno(reviewsDTO.getBno()).build())
-        .members(Members.builder().mid(reviewsDTO.getMid()).build())
+        .members(member)
         .likes(reviewsDTO.getLikes())
         .text(reviewsDTO.getText())
         .build();

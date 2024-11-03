@@ -18,7 +18,9 @@ public class MembersDTO {
   private String email;
   private String pw;
   private String name;
+  private String birth;
   private int nowcash;
+  private String phone;
   private int addcash;
   private String level;
   private String prefer;

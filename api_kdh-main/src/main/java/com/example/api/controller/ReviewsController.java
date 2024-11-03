@@ -26,7 +26,7 @@ public class ReviewsController {
     return new ResponseEntity<>(reviewsDTOList, HttpStatus.OK);
   }
 
-  @PostMapping("/list/{bno}")
+  @PostMapping("/{bno}")
   public ResponseEntity<Long> register(@RequestBody ReviewsDTO reviewsDTO, @PathVariable("bno") Long bno) {
     log.info("POST 요청이 도달했습니다. 요청 데이터: " + reviewsDTO);
     // Members 엔티티의 email을 설정
