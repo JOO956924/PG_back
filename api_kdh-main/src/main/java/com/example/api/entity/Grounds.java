@@ -32,6 +32,7 @@ public class Grounds extends BasicEntity {
   private int maxpeople; // 최대 인원
   private int nowpeople; // 현재 인원
   private int day;
+  private String email;
 
   // 제목 변경 메서드
   public void changeGtitle(String gtitle) { this.gtitle = gtitle; }
