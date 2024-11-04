@@ -164,4 +164,8 @@ public class BoardsServiceImpl implements BoardsService {
     log.info("deleteImage...... uuid: " + uuid);
     bphotosRepository.deleteByUuid(uuid);
   }
+
+  public List<String> getTitlesByEmail(String email) {
+    return boardsRepository.findTitlesByEmail(email);
+  }
 }

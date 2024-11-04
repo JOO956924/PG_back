@@ -27,6 +27,8 @@ public interface BoardsService {
 
   void removeUuid(String uuid);
 
+  List<String> getTitlesByEmail(String email);
+
   default Map<String, Object> dtoToEntity(BoardsDTO boardsDTO) {
     Map<String, Object> entityMap = new HashMap<>();
     Boards boards = Boards.builder()

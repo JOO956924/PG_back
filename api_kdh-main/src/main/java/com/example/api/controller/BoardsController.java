@@ -108,4 +108,10 @@ public class BoardsController {
     result.put("keyword", pageRequestDTO.getKeyword() + "");
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
+
+  // 이메일로 게시글 제목 조회 API
+  @GetMapping("/titles")
+  public List<String> getTitlesByEmail(@RequestParam String email) {
+    return boardsService.getTitlesByEmail(email);
+  }
 }

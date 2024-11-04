@@ -61,6 +61,8 @@ public interface BoardsRepository extends JpaRepository<Boards, Long>, SearchRep
       "where b.bno = :bno group by p ")
   List<Object[]> getBoardsWithAll(Long bno); //특정 게시글 조회
 
+  @Query("select b.title from Boards b where b.email = :email")
+  List<String> findTitlesByEmail(String email);
 }
 
 /*
