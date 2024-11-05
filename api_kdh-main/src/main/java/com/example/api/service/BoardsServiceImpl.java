@@ -5,8 +5,10 @@ import com.example.api.dto.PageRequestDTO;
 import com.example.api.dto.PageResultDTO;
 import com.example.api.entity.Boards;
 import com.example.api.entity.Bphotos;
+import com.example.api.entity.Members;
 import com.example.api.repository.BoardsRepository;
 import com.example.api.repository.BphotosRepository;
+import com.example.api.repository.MembersRepository;
 import com.example.api.repository.ReviewsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,24 +32,43 @@ public class BoardsServiceImpl implements BoardsService {
   private final BoardsRepository boardsRepository;
   private final BphotosRepository bphotosRepository;
   private final ReviewsRepository reviewsRepository;
+  private final MembersRepository membersRepository;
 
   @Override
   public Long register(BoardsDTO boardsDTO) {
     Map<String, Object> entityMap = dtoToEntity(boardsDTO);
     Boards boards = (Boards) entityMap.get("boards");
-    List<Bphotos> bphotosList =
-        (List<Bphotos>) entityMap.get("bphotosList");
+    List<Bphotos> bphotosList = (List<Bphotos>) entityMap.get("bphotosList");
+
+    // Boards 엔티티 저장
     boardsRepository.save(boards);
-    if (bphotosList != null) {
-      bphotosList.forEach(new Consumer<Bphotos>() {
-        @Override
-        public void accept(Bphotos bphotos) {
-          bphotosRepository.save(bphotos);
-        }
-      });
+
+    // Members 엔티티에 bno와 title을 조합하여 기존 bnotitle에 추가 저장
+    Optional<Members> optionalMember = membersRepository.findByEmail(boards.getEmail());
+    if (optionalMember.isPresent()) {
+      Members member = optionalMember.get();
+      String newBnoTitle = boards.getBno() + "-" + boards.getTitle(); // 새로 추가할 bno-title 값
+
+      // 기존 bnotitle 값에 새 bno-title 추가
+      String existingBnoTitle = member.getBnotitle();
+      if (existingBnoTitle != null && !existingBnoTitle.isEmpty()) {
+        member.setBnotitle(existingBnoTitle + "," + newBnoTitle); // 기존 값과 새로운 값 결합
+      } else {
+        member.setBnotitle(newBnoTitle); // 기존 값이 없을 경우 새 값만 저장
+      }
+      membersRepository.save(member);
     }
+
+    // Bphotos 리스트 저장
+    if (bphotosList != null) {
+      bphotosList.forEach(bphotos -> bphotosRepository.save(bphotos));
+    }
+
     return boards.getBno();
   }
+
+
+
 
   @Override
   public PageResultDTO<BoardsDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {

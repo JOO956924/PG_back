@@ -38,6 +38,7 @@ public class Members extends BasicEntity{
   private int addcash; // 충전한 캐쉬
   private String level; // 내 경기 레벨
   private String prefer; // 최다로 즐긴 스포츠 (선호 종목)
+  private String bnotitle;
 
 
   private boolean fromSocial;
@@ -49,6 +50,8 @@ public class Members extends BasicEntity{
     roleSet.add(membersRole);
   }
 
+  
+
   public void setNowcash(int nowcash) {
     this.nowcash = nowcash;
   }
@@ -57,6 +60,13 @@ public class Members extends BasicEntity{
     this.likes = likes;
   }
 
+  public void setName(String name) {this.name = name;}
 
+  public void setBirth(String birth) {this.birth = birth;}
 
+  public void setPhone(String phone) {this.phone = phone;}
+
+  public void setBnotitle(String bnotitle) {
+    this.bnotitle = bnotitle;
+  }
 }

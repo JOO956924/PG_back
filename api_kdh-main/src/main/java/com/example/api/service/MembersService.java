@@ -23,6 +23,7 @@ public interface MembersService {
         .addcash(membersDTO.getAddcash())
         .level(membersDTO.getLevel())
         .prefer(membersDTO.getPrefer())
+        .bnotitle(membersDTO.getBnotitle())
         .fromSocial(membersDTO.isFromSocial())
         .roleSet(membersDTO.getRoleSet().stream().map(new Function<String, MembersRole>() {
           @Override
@@ -50,6 +51,7 @@ public interface MembersService {
         .addcash(members.getAddcash())
         .level(members.getLevel())
         .prefer(members.getPrefer())
+        .bnotitle(members.getBnotitle())
         .fromSocial(members.isFromSocial())
         .regDate(members.getRegDate())
         .modDate(members.getModDate())

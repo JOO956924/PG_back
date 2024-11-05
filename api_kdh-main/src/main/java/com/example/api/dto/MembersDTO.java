@@ -25,7 +25,7 @@ public class MembersDTO {
   private String level;
   private String prefer;
   private String likes;
-
+  private String bnotitle;
   private boolean fromSocial;
   @Builder.Default
   private Set<String> roleSet = new HashSet<>();

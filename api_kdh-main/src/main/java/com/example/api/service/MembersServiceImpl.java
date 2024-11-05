@@ -50,6 +50,9 @@ public class MembersServiceImpl implements MembersService {
     if (result.isPresent()) {
       Members members = result.get();
       /* 변경할 내용은 members에 membersDTO의 내용을 변경하시오 */
+      members.setName(membersDTO.getName());
+      members.setBirth(membersDTO.getBirth());
+      members.setPhone(membersDTO.getPhone());
       return membersRepository.save(members).getMid();
     }
     return 0L;

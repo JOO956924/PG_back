@@ -68,7 +68,7 @@ public class MembersController {
     return new ResponseEntity<>("removed", HttpStatus.OK);
   }
 
-  @PutMapping(value = "/{num}", produces = MediaType.TEXT_PLAIN_VALUE)
+  @PutMapping(value = "/{mid}", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<String> modify(@RequestBody MembersDTO membersDTO) {
     log.info("modify... membersDTO: " + membersDTO);
     membersService.updateMembers(membersDTO);
