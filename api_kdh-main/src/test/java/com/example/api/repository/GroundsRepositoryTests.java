@@ -26,12 +26,14 @@ class GroundsRepositoryTests {
   @Commit
   @Test
   public void insertGrounds() {
-    IntStream.rangeClosed(1, 30).forEach(i -> {
-      Grounds grounds = Grounds.builder().gtitle("Grounds..." + i)
-          .groundstime("오후 "+i+"시")
+    IntStream.rangeClosed(1, 9).forEach(i -> {
+      Grounds grounds = Grounds.builder().gtitle("Grounds...5" + i)
+          .groundstime("0"+i+":"+"00")
+          .email("m" + i + "@a.a")
           .price(10000)
           .location("부산")
-          .day(20241023+i)
+          .day(20241110+i)
+          .maxpeople(5)
           .build();
       groundsRepository.save(grounds);
       System.out.println("----------------------------");

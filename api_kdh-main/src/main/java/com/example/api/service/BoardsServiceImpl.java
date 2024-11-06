@@ -24,6 +24,7 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -107,39 +108,55 @@ public class BoardsServiceImpl implements BoardsService {
     if (result.isPresent()) {
       Map<String, Object> entityMap = dtoToEntity(boardsDTO);
       Boards boards = (Boards) entityMap.get("boards");
+
+      // Boards 엔티티의 title을 변경
       boards.changeTitle(boardsDTO.getTitle());
       boardsRepository.save(boards);
-      // bphotosList :: 수정창에서 이미지 수정할 게 있는 경우의 목록
-      List<Bphotos> newBphotosList =
-          (List<Bphotos>) entityMap.get("bphotosList");
 
-      List<Bphotos> oldBphotosList =
-          bphotosRepository.findByMno(boards.getBno());
+      // Members 엔티티의 bnotitle 필드 업데이트 로직 추가
+      Optional<Members> optionalMember = membersRepository.findByEmail(boards.getEmail());
+      if (optionalMember.isPresent()) {
+        Members member = optionalMember.get();
+
+        // 기존의 bnotitle 값에서 수정된 title 반영
+        String oldBnoTitle = boards.getBno() + "-";
+        String newBnoTitle = oldBnoTitle + boards.getTitle();  // 새로 변경된 bno-title 값
+
+        String updatedBnoTitle = Arrays.stream(member.getBnotitle().split(","))
+            .map(bnoTitle -> bnoTitle.startsWith(oldBnoTitle) ? newBnoTitle : bnoTitle)
+            .collect(Collectors.joining(","));
+
+        member.setBnotitle(updatedBnoTitle);
+        membersRepository.save(member);
+      }
+
+      // bphotosList :: 수정창에서 이미지 수정할 목록
+      List<Bphotos> newBphotosList = (List<Bphotos>) entityMap.get("bphotosList");
+
+      // 기존 Bphotos 리스트
+      List<Bphotos> oldBphotosList = bphotosRepository.findByMno(boards.getBno());
+
       if (newBphotosList == null) {
-        // 수정창에서 이미지 모두를 지웠을 때
+        // 이미지가 모두 삭제된 경우
         bphotosRepository.deleteByBno(boards.getBno());
-        for (int i = 0; i < oldBphotosList.size(); i++) {
-          Bphotos oldBphotos = oldBphotosList.get(i);
+        for (Bphotos oldBphotos : oldBphotosList) {
           String fileName = oldBphotos.getPath() + File.separator
               + oldBphotos.getUuid() + "_" + oldBphotos.getBphotosName();
           deleteFile(fileName);
         }
-      } else { // newFeedsImageList에 일부 변화 발생
+      } else {
+        // 이미지 리스트에서 변경사항 처리
         newBphotosList.forEach(bphotos -> {
-          boolean result1 = false;
-          for (int i = 0; i < oldBphotosList.size(); i++) {
-            result1 = oldBphotosList.get(i).getUuid().equals(bphotos.getUuid());
-            if (result1) break;
+          boolean exists = oldBphotosList.stream()
+              .anyMatch(oldBphoto -> oldBphoto.getUuid().equals(bphotos.getUuid()));
+          if (!exists) {
+            bphotosRepository.save(bphotos);
           }
-          if (!result1) bphotosRepository.save(bphotos);
         });
         oldBphotosList.forEach(oldBphotos -> {
-          boolean result1 = false;
-          for (int i = 0; i < newBphotosList.size(); i++) {
-            result1 = newBphotosList.get(i).getUuid().equals(oldBphotos.getUuid());
-            if (result1) break;
-          }
-          if (!result1) {
+          boolean exists = newBphotosList.stream()
+              .anyMatch(newBphoto -> newBphoto.getUuid().equals(oldBphotos.getUuid()));
+          if (!exists) {
             bphotosRepository.deleteByUuid(oldBphotos.getUuid());
             String fileName = oldBphotos.getPath() + File.separator
                 + oldBphotos.getUuid() + "_" + oldBphotos.getBphotosName();
@@ -149,6 +166,7 @@ public class BoardsServiceImpl implements BoardsService {
       }
     }
   }
+
 
   private void deleteFile(String fileName) {
     // 실제 파일도 지우기
