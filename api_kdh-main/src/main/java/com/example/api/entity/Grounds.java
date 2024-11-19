@@ -4,6 +4,9 @@ import com.example.api.dto.GphotosDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +64,12 @@ public class Grounds extends BasicEntity {
 
   public boolean canReserve() {
     return "OPEN".equals(reservation); // 예약 가능 여부 확인
+  }
+
+  public LocalDateTime getGroundsDateTime() {
+    LocalDate date = LocalDate.of(day / 10000, (day % 10000) / 100, day % 100); // yyyyMMdd에서 날짜 생성
+    LocalTime time = LocalTime.parse(groundstime); // 시간 파싱
+    return LocalDateTime.of(date, time);
   }
 
 }

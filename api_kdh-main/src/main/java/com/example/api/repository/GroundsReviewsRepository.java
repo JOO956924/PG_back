@@ -26,4 +26,7 @@ public interface GroundsReviewsRepository extends JpaRepository<GroundsReviews, 
   @Modifying //update, delete 할 때 항상 표기
   @Query("delete from GroundsReviews r where r.grounds.gno=:gno")
   void deleteByGno(@Param("gno") Long gno);
+
+  @Query("SELECT gr.email FROM GroundsReviews gr WHERE gr.grounds.gno = :gno")
+  List<String> findEmailsByGroundId(@Param("gno") Long gno);
 }
